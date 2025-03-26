@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.shiki</groupId>
-	<artifactId>echo-waves</artifactId>
+	<artifactId>echo_waves</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>echo-waves</name>
+	<name>echo_waves</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
