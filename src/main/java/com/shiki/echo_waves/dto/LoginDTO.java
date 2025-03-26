@@ -16,4 +16,5 @@ public class LoginDTO {
         this.pseudo = pseudo;
         this.password = password;
     }
+//re
 }
