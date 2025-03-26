@@ -37,7 +37,7 @@ pipeline {
                 sh '''
                 docker stop echo-waves || true
                 docker rm echo-waves || true
-                docker run -d -p 8080:8080 --name echo-waves echo-waves:${BUILD_NUMBER}
+                docker run -d -p 8081:8080 --name echo-waves echo-waves:${BUILD_NUMBER}
                 '''
             }
         }
