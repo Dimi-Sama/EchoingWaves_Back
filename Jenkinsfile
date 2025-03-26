@@ -13,21 +13,6 @@ pipeline {
             }
         }
         
-        stage('Install Docker Compose') {
-            steps {
-                sh '''
-                # Vérifier si Docker Compose est déjà installé
-                if ! command -v docker-compose &> /dev/null; then
-                    echo "Installation de Docker Compose..."
-                    curl -L "https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-$(uname -s)-$(uname -m)" -o docker-compose
-                    chmod +x docker-compose
-                    sudo mv docker-compose /usr/local/bin/
-                fi
-                docker-compose --version
-                '''
-            }
-        }
-        
         stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests -Dmaven.test.failure.ignore=true'
@@ -45,7 +30,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                # Puisque docker-compose n'est pas disponible, utilisons docker directement
+                # Utiliser docker directement sans docker-compose
+                
                 # Arrêter et supprimer les conteneurs existants
                 docker stop echo-waves-app db-postgres || true
                 docker rm echo-waves-app db-postgres || true
