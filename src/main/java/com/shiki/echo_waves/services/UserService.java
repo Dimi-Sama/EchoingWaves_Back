@@ -31,22 +31,32 @@ public class UserService {
     
     @Transactional
     public User createUser(User user) {
+        // Vérifier si l'email existe déjà
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email déjà utilisé");
         }
+        
+        // Vérifier si le pseudo existe déjà
         if (userRepository.existsByPseudo(user.getPseudo())) {
             throw new RuntimeException("Pseudo déjà utilisé");
         }
         
-        // Sauvegarde de l'utilisateur
-        user = userRepository.save(user);
+        // Encoder le mot de passe
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         
-        // Création automatique de sa collection
+        // Sauvegarder l'utilisateur d'abord
+        User savedUser = userRepository.save(user);
+        
+        // Créer une collection pour l'utilisateur
         UsersCollection collection = new UsersCollection();
-        collection.setUser(user);
-        usersCollectionRepository.save(collection);
+        collection.setUser(savedUser);
+        collection = usersCollectionRepository.save(collection);
         
-        return user;
+        // Associer la collection à l'utilisateur
+        savedUser.setUsersCollection(collection);
+        
+        // Sauvegarder à nouveau l'utilisateur
+        return userRepository.save(savedUser);
     }
     
     public User updateUser(Integer id, User userDetails) {
