@@ -1,10 +1,10 @@
 version: '3.8'
 
 services:
-  app:
+  echowaves:
     image: echo-waves:latest
     ports:
-      - "8081:8080"
+      - "8085:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/EchoWaves
       - SPRING_DATASOURCE_USERNAME=Echo
@@ -14,6 +14,7 @@ services:
       - db
     networks:
       - echo-network
+      - proxy_net
 
   db:
     image: postgres:14
@@ -31,6 +32,8 @@ services:
 networks:
   echo-network:
     driver: bridge
+  proxy_net:
+    external: true
 
 volumes:
   postgres-data: 
