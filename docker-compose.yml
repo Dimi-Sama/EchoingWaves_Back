@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    image: echo-waves:latest
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/EchoWaves
+      - SPRING_DATASOURCE_USERNAME=Echo
+      - SPRING_DATASOURCE_PASSWORD=Waves1234
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
+    networks:
+      - echo-network
+
+  db:
+    image: postgres:14
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=EchoWaves
+      - POSTGRES_USER=Echo
+      - POSTGRES_PASSWORD=Waves1234
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - echo-network
+
+networks:
+  echo-network:
+    driver: bridge
+
+volumes:
+  postgres-data: 
