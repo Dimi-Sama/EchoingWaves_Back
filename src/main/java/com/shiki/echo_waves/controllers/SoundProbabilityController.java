@@ -2,6 +2,7 @@ package com.shiki.echo_waves.controllers;
 
 import com.shiki.echo_waves.models.SoundProbability;
 import com.shiki.echo_waves.services.SoundProbabilityService;
+import com.shiki.echo_waves.dto.SoundProbabilityResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,38 +20,38 @@ public class SoundProbabilityController {
     @Autowired
     private SoundProbabilityService soundProbabilityService;
 
-    @Operation(summary = "Récupérer toutes les probabilités",
-              description = "Retourne la liste de toutes les probabilités disponibles")
+    @Operation(summary = "Récupérer toutes les probabilités avec noms des chansons",
+              description = "Retourne la liste de toutes les probabilités disponibles avec les noms des chansons")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Liste des probabilités trouvée"),
         @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
     })
     @GetMapping
-    public ResponseEntity<List<SoundProbability>> getAllProbabilities() {
-        return ResponseEntity.ok(soundProbabilityService.getAllProbabilities());
+    public ResponseEntity<List<SoundProbabilityResponseDTO>> getAllProbabilities() {
+        return ResponseEntity.ok(soundProbabilityService.getAllProbabilitiesWithSoundNames());
     }
 
-    @Operation(summary = "Récupérer une probabilité par son ID",
-              description = "Retourne une probabilité unique identifiée par son ID")
+    @Operation(summary = "Récupérer une probabilité par son ID avec nom de la chanson",
+              description = "Retourne une probabilité unique identifiée par son ID avec le nom de la chanson")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Probabilité trouvée"),
         @ApiResponse(responseCode = "404", description = "Probabilité non trouvée")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<SoundProbability> getProbabilityById(@PathVariable Integer id) {
-        return ResponseEntity.ok(soundProbabilityService.getProbabilityById(id));
+    public ResponseEntity<SoundProbabilityResponseDTO> getProbabilityById(@PathVariable Integer id) {
+        return ResponseEntity.ok(soundProbabilityService.getProbabilityByIdWithSoundName(id));
     }
 
-    @Operation(summary = "Récupérer les probabilités par le contenu de la boîte",
-              description = "Retourne les probabilités associées à un contenu de boîte spécifié")
+    @Operation(summary = "Récupérer les probabilités par le contenu de la boîte avec noms des chansons",
+              description = "Retourne les probabilités associées à un contenu de boîte spécifié avec les noms des chansons")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Liste des probabilités trouvée"),
         @ApiResponse(responseCode = "404", description = "Contenu de boîte non trouvé")
     })
     @GetMapping("/box-content/{boxContentId}")
-    public ResponseEntity<List<SoundProbability>> getProbabilitiesByBoxContent(
+    public ResponseEntity<List<SoundProbabilityResponseDTO>> getProbabilitiesByBoxContent(
             @PathVariable Integer boxContentId) {
-        return ResponseEntity.ok(soundProbabilityService.getProbabilitiesByBoxContent(boxContentId));
+        return ResponseEntity.ok(soundProbabilityService.getProbabilitiesByBoxContentWithSoundNames(boxContentId));
     }
 
     @Operation(summary = "Créer une nouvelle probabilité",

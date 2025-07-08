@@ -62,7 +62,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "Utilisateur créé avec succès"),
         @ApiResponse(responseCode = "400", description = "Données invalides")
     })
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return ResponseEntity.ok(userService.createUser(user));
@@ -138,6 +138,7 @@ public class UserController {
                 String token = JwtUtil.generateToken(user.getPseudo(), user.getRole().toString());
                 Map<String, String> response = new HashMap<>();
                 response.put("token", token);
+                response.put("id", user.getId().toString());
                 response.put("pseudo", user.getPseudo());
                 response.put("role", user.getRole().toString());
                 return ResponseEntity.ok(response);
