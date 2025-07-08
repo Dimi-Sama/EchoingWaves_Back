@@ -20,12 +20,15 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Install SSH Key
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 700 ~/.ssh
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/deploy_key
 
       - name: Build and Deploy
         env:
@@ -37,6 +40,9 @@ jobs:
           
           # Save image to tar file
           docker save echo-waves:latest > echo-waves.tar
+          
+          # Test SSH connection
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $VPS_USERNAME@$VPS_HOST "echo 'SSH connection successful'"
           
           # Copy files to VPS
           scp -i ~/.ssh/deploy_key echo-waves.tar docker-compose.yml $VPS_USERNAME@$VPS_HOST:~/echo-waves/
