@@ -44,6 +44,9 @@ public class UserService {
         // Encoder le mot de passe
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
+        // Initialiser les points à 0
+        user.setPoints(0);
+        
         // Sauvegarder l'utilisateur d'abord
         User savedUser = userRepository.save(user);
         
@@ -65,6 +68,9 @@ public class UserService {
         user.setEmail(userDetails.getEmail());
         user.setSecret_bool(userDetails.getSecret_bool());
         user.setRole(userDetails.getRole());
+        if (userDetails.getPoints() != null) {
+            user.setPoints(userDetails.getPoints());
+        }
         return userRepository.save(user);
     }
     
@@ -79,5 +85,25 @@ public class UserService {
 
     public boolean checkPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
+    @Transactional
+    public User addPoints(Integer userId, Integer pointsToAdd) {
+        User user = getUserById(userId);
+        user.setPoints(user.getPoints() + pointsToAdd);
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User removePoints(Integer userId, Integer pointsToRemove) {
+        User user = getUserById(userId);
+        int newPoints = Math.max(0, user.getPoints() - pointsToRemove);
+        user.setPoints(newPoints);
+        return userRepository.save(user);
+    }
+
+    public Integer getUserPoints(Integer userId) {
+        User user = getUserById(userId);
+        return user.getPoints();
     }
 } 

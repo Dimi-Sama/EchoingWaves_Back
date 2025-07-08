@@ -24,12 +24,12 @@ public class User {
     @NotBlank(message = "Le mot de passe est obligatoire")
     private String password;
     private Boolean secret_bool;
-    private UserRoles role;  
+    private UserRoles role;
+    private Integer points = 0;  
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Tirage> tirages;
-
 
     @OneToOne(mappedBy = "user")
     private UsersCollection usersCollection;

@@ -94,32 +94,6 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    // @PostMapping("/hash-all-passwords")
-    // public ResponseEntity<Map<String, String>> hashAllPasswords() {
-    //     try {
-    //         List<User> users = userService.getAllUsers();
-    //         int count = 0;
-            
-    //         for (User user : users) {
-    //             if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
-    //                 String hashedPassword = passwordEncoder.encode(user.getPassword());
-    //                 user.setPassword(hashedPassword);
-    //                 userService.updateUser(user.getId(), user);
-    //                 count++;
-    //             }
-    //         }
-            
-    //         Map<String, String> response = new HashMap<>();
-    //         response.put("message", count + " mots de passe ont été hashés avec succès");
-    //         return ResponseEntity.ok(response);
-            
-    //     } catch (Exception e) {
-    //         Map<String, String> errorResponse = new HashMap<>();
-    //         errorResponse.put("message", "Erreur lors du hashage des mots de passe: " + e.getMessage());
-    //         return ResponseEntity.internalServerError().body(errorResponse);
-    //     }
-    // }
-
     @Operation(summary = "Connexion d'un utilisateur",
               description = "Connexion d'un utilisateur avec les informations fournies")
     @ApiResponses(value = {
@@ -139,6 +113,7 @@ public class UserController {
                 response.put("id", user.getId().toString());
                 response.put("pseudo", user.getPseudo());
                 response.put("role", user.getRole().toString());
+                response.put("points", user.getPoints().toString());
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(401).body(Map.of("message", "Identifiants invalides"));
@@ -146,5 +121,41 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of("message", "Erreur serveur"));
         }
+    }
+
+    @Operation(summary = "Obtenir les points d'un utilisateur",
+              description = "Retourne le nombre de points d'un utilisateur")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Points récupérés avec succès"),
+        @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
+    })
+    @GetMapping("/{id}/points")
+    public ResponseEntity<Map<String, Integer>> getUserPoints(@PathVariable Integer id) {
+        Integer points = userService.getUserPoints(id);
+        return ResponseEntity.ok(Map.of("points", points));
+    }
+
+    @Operation(summary = "Ajouter des points à un utilisateur",
+              description = "Ajoute un nombre spécifié de points à un utilisateur")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Points ajoutés avec succès"),
+        @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
+    })
+    @PostMapping("/{id}/points/add")
+    public ResponseEntity<User> addPoints(@PathVariable Integer id, @RequestBody Map<String, Integer> pointsMap) {
+        Integer pointsToAdd = pointsMap.get("points");
+        return ResponseEntity.ok(userService.addPoints(id, pointsToAdd));
+    }
+
+    @Operation(summary = "Retirer des points à un utilisateur",
+              description = "Retire un nombre spécifié de points à un utilisateur")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Points retirés avec succès"),
+        @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
+    })
+    @PostMapping("/{id}/points/remove")
+    public ResponseEntity<User> removePoints(@PathVariable Integer id, @RequestBody Map<String, Integer> pointsMap) {
+        Integer pointsToRemove = pointsMap.get("points");
+        return ResponseEntity.ok(userService.removePoints(id, pointsToRemove));
     }
 } 
