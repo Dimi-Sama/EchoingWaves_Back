@@ -94,15 +94,6 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/delete-all-users-secret")
-    public ResponseEntity<?> deleteAllUsers() {
-        List<User> users = userService.getAllUsers();
-        for (User user : users) {
-            userService.deleteUser(user.getId());
-        }
-        return ResponseEntity.ok(Map.of("message", "Tous les utilisateurs ont été supprimés"));
-    }
-
     // @PostMapping("/hash-all-passwords")
     // public ResponseEntity<Map<String, String>> hashAllPasswords() {
     //     try {

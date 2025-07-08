@@ -15,6 +15,7 @@ services:
     networks:
       - echo-network
       - proxy_net
+    restart: always
 
   db:
     image: postgres:14
@@ -28,6 +29,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - echo-network
+    restart: always
 
 networks:
   echo-network:
@@ -36,4 +38,4 @@ networks:
     external: true
 
 volumes:
-  postgres-data: 
+  postgres-data:
