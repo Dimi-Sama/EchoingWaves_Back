@@ -1,0 +1,47 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Build and Deploy
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+        run: |
+          # Build Docker image
+          docker build -t echo-waves:latest .
+          
+          # Save image to tar file
+          docker save echo-waves:latest > echo-waves.tar
+          
+          # Copy files to VPS
+          scp echo-waves.tar docker-compose.yml $VPS_USERNAME@$VPS_HOST:~/echo-waves/
+          
+          # Deploy on VPS
+          ssh $VPS_USERNAME@$VPS_HOST "cd ~/echo-waves && \
+            docker load < echo-waves.tar && \
+            docker-compose down && \
+            docker-compose up -d" 
