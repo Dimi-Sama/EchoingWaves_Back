@@ -106,4 +106,13 @@ public class UserService {
         User user = getUserById(userId);
         return user.getPoints();
     }
+
+    @Transactional
+    public void resetAllUsersPoints() {
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            user.setPoints(0);
+        }
+        userRepository.saveAll(users);
+    }
 } 

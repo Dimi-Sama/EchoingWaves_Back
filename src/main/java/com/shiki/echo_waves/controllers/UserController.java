@@ -158,4 +158,21 @@ public class UserController {
         Integer pointsToRemove = pointsMap.get("points");
         return ResponseEntity.ok(userService.removePoints(id, pointsToRemove));
     }
+
+    @Operation(summary = "Réinitialiser les points de tous les utilisateurs",
+              description = "Met à 0 les points de tous les utilisateurs")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Points réinitialisés avec succès"),
+        @ApiResponse(responseCode = "500", description = "Erreur serveur")
+    })
+    @PostMapping("/points/reset-all")
+    public ResponseEntity<Map<String, String>> resetAllUsersPoints() {
+        try {
+            userService.resetAllUsersPoints();
+            return ResponseEntity.ok(Map.of("message", "Les points de tous les utilisateurs ont été réinitialisés à 0"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(Map.of("message", "Erreur lors de la réinitialisation des points: " + e.getMessage()));
+        }
+    }
 } 
